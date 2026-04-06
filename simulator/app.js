@@ -60,7 +60,6 @@ document.getElementById('btnRun').onclick = run;
 document.getElementById('btnClear').onclick = clearAll;
 
 function computeTrajectory(v0, thetaDeg, phiDeg, y0, g) {
-
   const theta = thetaDeg * Math.PI / 180;
   const phi   = phiDeg   * Math.PI / 180;
 
@@ -69,10 +68,10 @@ function computeTrajectory(v0, thetaDeg, phiDeg, y0, g) {
   const v0z = v0 * Math.cos(theta) * Math.sin(phi);
 
   const discriminant = v0y * v0y + 2 * g * y0;
+
   if (discriminant < 0) return null;
 
   const T = (v0y + Math.sqrt(discriminant)) / g;
-
   const N = 500;
   const dt = T / N;
 
@@ -98,7 +97,20 @@ function run() {
   const g = +document.getElementById('g').value;
   const color = document.getElementById('trajColor').value;
 
-  if (v0 <= 0 || g <= 0) return;
+  if (v0 <= 0) {
+    alert("Швидкість має бути > 0");
+    return;
+  }
+
+  if (theta <= 0 || theta >= 90) {
+    alert("Кут θ має бути від 1 до 89");
+    return;
+  }
+
+  if (g <= 0) {
+    alert("g має бути > 0");
+    return;
+  }
 
   const result = computeTrajectory(v0, theta, phi, y0, g);
   if (!result) return;
