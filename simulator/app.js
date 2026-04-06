@@ -57,6 +57,8 @@ function createAxes(size = 30) {
 createAxes();
 
 document.getElementById('btnRun').onclick = run;
+document.getElementById('btnClear').onclick = clearAll;
+
 function computeTrajectory(v0, thetaDeg, phiDeg, y0, g) {
 
   const theta = thetaDeg * Math.PI / 180;
@@ -116,6 +118,25 @@ function run() {
   index = 0;
 }
 
+function clearAll() {
+
+  if (ball) ball.dispose();
+
+  if (currentTrajectory) currentTrajectory.dispose();
+
+  allTrajectories.forEach(t => t.dispose());
+  allTrajectories = [];
+
+  points = [];
+  index = 0;
+}
+
 engine.runRenderLoop(() => {
+
+  if (points.length > 0 && index < points.length) {
+    ball.position = points[index];
+    index++;
+  }
+
   scene.render();
 });
