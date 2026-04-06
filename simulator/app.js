@@ -20,6 +20,43 @@ let allTrajectories = [];
 let points = [];
 let index = 0;
 
+const ground = BABYLON.MeshBuilder.CreateGround('ground', {
+  width: 200,
+  height: 200
+}, scene);
+
+const gridMat = new BABYLON.GridMaterial('grid', scene);
+gridMat.gridRatio = 2;
+ground.material = gridMat;
+
+function createAxes(size = 30) {
+
+  BABYLON.MeshBuilder.CreateLines('xAxis', {
+    points: [
+      new BABYLON.Vector3(0, 0, 0),
+      new BABYLON.Vector3(size, 0, 0)
+    ]
+  }, scene).color = new BABYLON.Color3(1, 0, 0);
+
+
+  BABYLON.MeshBuilder.CreateLines('yAxis', {
+    points: [
+      new BABYLON.Vector3(0, 0, 0),
+      new BABYLON.Vector3(0, size, 0)
+    ]
+  }, scene).color = new BABYLON.Color3(0, 1, 0);
+
+  BABYLON.MeshBuilder.CreateLines('zAxis', {
+    points: [
+      new BABYLON.Vector3(0, 0, 0),
+      new BABYLON.Vector3(0, 0, size)
+    ]
+  }, scene).color = new BABYLON.Color3(0, 0, 1);
+}
+
+createAxes();
+
+document.getElementById('btnRun').onclick = run;
 function computeTrajectory(v0, thetaDeg, phiDeg, y0, g) {
 
   const theta = thetaDeg * Math.PI / 180;
@@ -57,6 +94,7 @@ function run() {
   const phi = +document.getElementById('phi').value;
   const y0 = +document.getElementById('y0').value;
   const g = +document.getElementById('g').value;
+  const color = document.getElementById('trajColor').value;
 
   if (v0 <= 0 || g <= 0) return;
 
@@ -69,8 +107,15 @@ function run() {
     allTrajectories.push(currentTrajectory);
   }
 
+  currentTrajectory = BABYLON.MeshBuilder.CreateLines('traj', { points }, scene);
+  currentTrajectory.color = BABYLON.Color3.FromHexString(color);
+
   if (ball) ball.dispose();
   ball = BABYLON.MeshBuilder.CreateSphere('ball', { diameter: 1.5 }, scene);
 
   index = 0;
 }
+
+engine.runRenderLoop(() => {
+  scene.render();
+});
